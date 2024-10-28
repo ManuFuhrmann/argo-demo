@@ -2,17 +2,20 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: git-clone-pvc
+  namespace: argo-demo  # Specify the correct namespace
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
+  storageClassName: standard  # Specify a valid storage class
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-php-deployment
+  namespace: argo-demo  # Specify the correct namespace
 spec:
   replicas: 1
   selector:
@@ -25,7 +28,7 @@ spec:
     spec:
       containers:
       - name: nginx-php
-        image: manuelfuhrmann/php-fpm-extended:latest  # Replace with your actual Docker Hub image name
+        image: manu-fuhrmann/nginx-php-own  # Replace with your actual Docker Hub image name
         ports:
         - containerPort: 80
         volumeMounts:
@@ -34,7 +37,7 @@ spec:
       initContainers:
       - name: git-clone
         image: alpine/git  # Use a lightweight image to perform the clone
-        command: ['sh', '-c', 'git clone --single-branch --branch main https://github.com/ManuFuhrmann/argo-demo /git-repo']  # Replace 'main' with your branch if needed
+        command: ['sh', '-c', 'git clone --single-branch --branch main https://github.com/ManuFuhrmann/upload /git-repo']  # Replace 'main' with your branch if needed
         volumeMounts:
         - name: git-clone-storage
           mountPath: /git-repo
@@ -47,6 +50,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nginx-php-service
+  namespace: argo-demo  # Specify the correct namespace
 spec:
   type: NodePort  # Use NodePort to expose the service externally
   ports:
