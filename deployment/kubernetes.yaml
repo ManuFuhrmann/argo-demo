@@ -1,21 +1,8 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: git-clone-pvc
-  namespace: argo-demo  # Specify the correct namespace
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: standard  # Specify a valid storage class
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-php-deployment
-  namespace: argo-demo  # Specify the correct namespace
+  namespace: argo-demo  # Specify your namespace
 spec:
   replicas: 1
   selector:
@@ -28,31 +15,27 @@ spec:
     spec:
       containers:
       - name: nginx-php
-        image: manu-fuhrmann/nginx-php-own  # Replace with your actual Docker Hub image name
+        image: manu-fuhrmann/nginx-php-own  # Replace with your Docker Hub image
         ports:
         - containerPort: 80
-        volumeMounts:
-        - name: git-clone-storage
+        volumeMounts:  # You can use this if you want to mount files at startup
+        - name: html-storage
           mountPath: /var/www/html  # The default document root for nginx
       initContainers:
       - name: git-clone
-        image: alpine/git  # Use a lightweight image to perform the clone
-        command: ['sh', '-c', 'git clone --single-branch --branch main https://github.com/ManuFuhrmann/upload /git-repo']  # Replace 'main' with your branch if needed
-        volumeMounts:
-        - name: git-clone-storage
-          mountPath: /git-repo
-      volumes:
-      - name: git-clone-storage
-        persistentVolumeClaim:
-          claimName: git-clone-pvc
+        image: alpine/git  # Lightweight image to perform the clone
+        command: ['sh', '-c', 'git clone --single-branch --branch main https://github.com/ManuFuhrmann/upload /var/www/html']  # Adjust this to clone directly to the nginx path
+      volumes:  # Remove PVC references
+      - name: html-storage
+        emptyDir: {}  # Use emptyDir for temporary storage
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: nginx-php-service
-  namespace: argo-demo  # Specify the correct namespace
+  namespace: argo-demo  # Ensure the service is in the correct namespace
 spec:
-  type: NodePort  # Use NodePort to expose the service externally
+  type: NodePort  # Expose the service externally
   ports:
     - port: 80
       targetPort: 80
