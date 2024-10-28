@@ -38,7 +38,7 @@ spec:
   type: NodePort  # Expose the service externally
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: 9376
       nodePort: 30080  # You can specify a NodePort or let Kubernetes choose one
   selector:
     app: nginx-php
