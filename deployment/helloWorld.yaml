@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-env
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world-env
+  template:
+    metadata:
+      labels:
+        app: hello-world-env
+    spec:
+      containers:
+      - name: hello-world-env
+        image: bithavoc/hello-world-env
+        env:
+        - name: MESSAGE
+          value: "cool by env"
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-env-service
+spec:
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000
+    nodePort: 30000  # Optional: specify a node port or let Kubernetes assign one
+  selector:
+    app: hello-world-env
