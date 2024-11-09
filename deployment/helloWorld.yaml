@@ -2,7 +2,36 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: hello-world
+
 ---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-ingress
+  namespace: argocd
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  rules:
+  - host: argocd.meine-wiese.de   # Replace with your hostname
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              number: 443
+  tls:
+  - hosts:
+    - argocd.meine-wiese.de        # Replace with your hostname
+    secretName: argocd-tls         # Optionally, set up a TLS certificate
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,17 +55,3 @@ spec:
           value: "cool by env"
         ports:
         - containerPort: 3000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: hello-world-env-service
-  namespace: hello-world
-spec:
-  type: NodePort
-  ports:
-  - port: 3000
-    targetPort: 3000
-    nodePort: 30000  # Optional: specify a node port or let Kubernetes assign one
-  selector:
-    app: hello-world-env
