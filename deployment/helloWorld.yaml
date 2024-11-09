@@ -5,53 +5,59 @@ metadata:
 
 ---
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+      - name: hello-world
+        #image: "gcr.io/google-samples/hello-app:1.0"
+        image: "hello-world:latest"
+        ports:
+        - containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-service
+spec:
+  selector:
+    app: hello-world
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+
+---
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: hello-world-ingress
-  namespace: hello-world
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: hello-world.meine-wiese.de   # Replace with your hostname
+  - host: hello-world.meine-wiese.de  # Replace this with your actual domain
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: hello-world-env
+            name: hello-world-service
             port:
-              number: 3000
-  tls:
-  - hosts:
-    - hello-world.meine-wiese.de        # Replace with your hostname
-    secretName: hello-world-tls         # Optionally, set up a TLS certificate
-
----
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: hello-world-env
-  namespace: hello-world
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: hello-world-env
-  template:
-    metadata:
-      labels:
-        app: hello-world-env
-    spec:
-      containers:
-      - name: hello-world-env
-        image: bithavoc/hello-world-env
-        env:
-        - name: MESSAGE
-          value: "cool by env"
-        ports:
-        - containerPort: 3000
+              number: 80
