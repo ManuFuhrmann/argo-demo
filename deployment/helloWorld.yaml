@@ -24,7 +24,7 @@ spec:
           service:
             name: hello-world-env
             port:
-              number: 443
+              number: 3000
   tls:
   - hosts:
     - hello-world.meine-wiese.de        # Replace with your hostname
