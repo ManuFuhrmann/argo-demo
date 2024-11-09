@@ -31,7 +31,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: hello-world-env-service
-  namespace: hallo-world
+  namespace: hello-world
 spec:
   type: NodePort
   ports:
