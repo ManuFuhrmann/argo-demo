@@ -8,27 +8,27 @@ metadata:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: argocd-ingress
-  namespace: argocd
+  name: hello-world-ingress
+  namespace: hello-world
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   rules:
-  - host: argocd.meine-wiese.de   # Replace with your hostname
+  - host: hello-world.meine-wiese.de   # Replace with your hostname
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: argocd-server
+            name: hello-world-server
             port:
               number: 443
   tls:
   - hosts:
-    - argocd.meine-wiese.de        # Replace with your hostname
-    secretName: argocd-tls         # Optionally, set up a TLS certificate
+    - hello-world.meine-wiese.de        # Replace with your hostname
+    secretName: hello-world-tls         # Optionally, set up a TLS certificate
 
 ---
 
