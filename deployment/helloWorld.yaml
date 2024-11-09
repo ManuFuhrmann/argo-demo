@@ -22,7 +22,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: hello-world-server
+            name: hello-world-env
             port:
               number: 443
   tls:
