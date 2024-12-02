@@ -64,6 +64,12 @@ services:
       - "traefik.http.routers.airflow.tls.certresolver=leresolver"
       - "traefik.http.routers.airflow.service=airflow"
       - "traefik.http.services.airflow.loadbalancer.server.port=8080"
+    networks:
+      - traefik_proxy
+
+networks:
+  traefik_proxy:
+    external: true
 
 volumes:
   postgresql_data: {}
