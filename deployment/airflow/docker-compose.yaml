@@ -35,7 +35,7 @@ services:
   airflow-worker-1:
     build:
       context: /var/docker/airflow
-      dockerfile: /var/docker/airflow/Dockerfile
+      dockerfile: ./Dockerfile
     container_name: airflow-worker1
     volumes:
       - '/var/docker/airflow/dags:/opt/bitnami/airflow/dags'
