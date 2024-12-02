@@ -1,6 +1,7 @@
 services:
   postgresql:
     image: bitnami/postgresql:16
+    container_name: airflow-sql
     volumes:
       - 'postgresql_data:/bitnami/postgresql'
     environment:
@@ -11,6 +12,7 @@ services:
 
   redis:
     image: bitnami/redis:7.0
+    container_name: airflow-redis
     volumes:
       - 'redis_data:/bitnami/redis/data'
     environment:
@@ -18,6 +20,7 @@ services:
 
   airflow-scheduler:
     image: bitnami/airflow-scheduler:2.9.1
+    container_name: airflow-schedule
     volumes:
       - '/var/docker/airflow/dags:/opt/bitnami/airflow/dags'
     environment:
@@ -29,10 +32,11 @@ services:
       - AIRFLOW_WEBSERVER_HOST=airflow
       - AIRFLOW_LOAD_EXAMPLES=no
 
-  airflow-worker:
+  airflow-worker-1:
     build:
       context: /var/docker/airflow
       dockerfile: /var/docker/airflow/Dockerfile
+    container_name: airflow-worker1
     volumes:
       - '/var/docker/airflow/dags:/opt/bitnami/airflow/dags'
       - '/var/docker/airflow/:/opt/bitnami/airflow/project'
@@ -46,6 +50,7 @@ services:
 
   airflow:
     image: bitnami/airflow:2.9.1
+    container_name: airflow-main
     environment:
       - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
       - AIRFLOW_DATABASE_NAME=bitnami_airflow
