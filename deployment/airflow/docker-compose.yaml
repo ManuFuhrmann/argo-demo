@@ -19,7 +19,7 @@ services:
   airflow-scheduler:
     image: bitnami/airflow-scheduler:2.9.1
     volumes:
-      - './dags:/opt/bitnami/airflow/dags'
+      - 'var/docker/airflow/dags:/opt/bitnami/airflow/dags'
     environment:
       - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
       - AIRFLOW_DATABASE_NAME=bitnami_airflow
@@ -31,11 +31,11 @@ services:
 
   airflow-worker:
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: var/docker/airflow
+      dockerfile: var/docker/airflow/Dockerfile
     volumes:
-      - './dags:/opt/bitnami/airflow/dags'
-      - './:/opt/bitnami/airflow/project'
+      - 'var/docker/airflow/dags:/opt/bitnami/airflow/dags'
+      - 'var/docker/airflow/:/opt/bitnami/airflow/project'
     environment:
       - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
       - AIRFLOW_DATABASE_NAME=bitnami_airflow
