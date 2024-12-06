@@ -23,6 +23,7 @@ services:
     networks:
       - traefik_proxy
       - databases
+      - influx_grafana
 
   grafana:
     image: grafana/grafana
@@ -41,9 +42,12 @@ services:
     networks:
       - traefik_proxy
       - databases
+      - influx_grafana
 
 networks:
   traefik_proxy:
     external: true
   databases:
     external: true
+  influx_grafana:
+    external: false
